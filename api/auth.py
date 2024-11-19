@@ -13,12 +13,14 @@ class LoginRequest(BaseModel):
     email: str
     password: str
 
-@app.post("/api/signup")
+@app.post("/api/signup") 
 async def signup(request: SignupRequest):
     try:
+        # Validate input
         if not request.email or not request.password:
             raise HTTPException(status_code=400, detail="Email and password are required")
         
+        # Create user in Firebase Admin Auth
         user = auth.create_user(
             email=request.email,
             password=request.password
