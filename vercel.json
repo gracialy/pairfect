@@ -30,6 +30,10 @@
         {
             "src": "/api",
             "dest": "api/index.py"
+        },
+        {
+            "src": "/privacy-policy",
+            "dest": "api/privacy-policy.py"
         }
     ]
 }
