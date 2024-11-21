@@ -14,7 +14,7 @@
             "use": "@vercel/python"
         },
         {
-            "src": "api/privacy-policy.json",
+            "src": "api/privacy-policy.js",
             "use": "@vercel/node"
         }
     ],
@@ -37,7 +37,7 @@
         },
         {
             "src": "/privacy-policy",
-            "dest": "api/privacy-policy.json"
+            "dest": "api/privacy-policy.js"
         }
     ]
 }
