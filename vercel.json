@@ -12,6 +12,10 @@
         {
             "src": "api/index.py",
             "use": "@vercel/python"
+        },
+        {
+            "src": "api/privacy-policy.json",
+            "use": "@vercel/node"
         }
     ],
     "routes": [
@@ -33,7 +37,7 @@
         },
         {
             "src": "/privacy-policy",
-            "dest": "api/privacy-policy.py"
+            "dest": "api/privacy-policy.json"
         }
     ]
 }
