@@ -1,13 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from api.auth import router as auth_router
+from api.ping import router as ping_router
 
 app = FastAPI(
     title="Pairfect API",
-    description="API for photo pairing app",
-    version="1.0.0",
-    docs_url="/api/docs", 
-    openapi_url="/api/openapi.json"  # Schema
+    description="API for photo pairing with the help of Vision AI",
+    version="1.0.0"
 )
+
+app.include_router(auth_router)
+app.include_router(ping_router)
 
 # CORS middleware
 allow_all = ['*']

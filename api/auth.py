@@ -1,9 +1,9 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from utils.firebase import auth, pb
 
-app = FastAPI()
+router = APIRouter()
 
 class SignupRequest(BaseModel):
     email: str
@@ -13,7 +13,7 @@ class LoginRequest(BaseModel):
     email: str
     password: str
 
-@app.post("/api/signup") 
+@router.post("/api/signup") 
 async def signup(request: SignupRequest):
     try:
         # Validate input
@@ -33,7 +33,7 @@ async def signup(request: SignupRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.post("/api/login")
+@router.post("/api/login")
 async def login(request: LoginRequest):
     try:
         user = pb.auth().sign_in_with_email_and_password(request.email, request.password)

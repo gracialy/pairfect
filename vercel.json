@@ -4,36 +4,12 @@
         {
             "src": "api/index.py",
             "use": "@vercel/python"
-        },
-        {
-            "src": "api/auth.py",
-            "use": "@vercel/python"
-        },
-        {
-            "src": "api/ping.py",
-            "use": "@vercel/python"
         }
     ],
     "routes": [
         {
-            "src": "/api/docs",
+            "src": "/api/(.*)",
             "dest": "api/index.py"
-        },
-        {
-            "src": "/api",
-            "dest": "api/index.py"
-        },
-        {
-            "src": "/api/signup",
-            "dest": "api/auth.py"
-        },
-        {
-            "src": "/api/login",
-            "dest": "api/auth.py"
-        },
-        {
-            "src": "/api/ping",
-            "dest": "api/ping.py"
         }
     ]
 }

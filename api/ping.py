@@ -1,10 +1,9 @@
-# api/ping.py
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException
 from utils.firebase import auth
 
-app = FastAPI()
+router = APIRouter()
 
-@app.post("/api/ping")  # Explicitly include /api in the route
+@router.post("/api/ping") 
 async def validate(request: Request):
     headers = request.headers
     jwt = headers.get('authorization')
