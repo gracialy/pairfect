@@ -1,7 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+app = FastAPI(
+    title="Pairfect API",
+    description="API for photo pairing app",
+    version="1.0.0",
+    docs_url="/api/docs", 
+    openapi_url="/api/openapi.json"  # Schema
+)
 
 # CORS middleware
 allow_all = ['*']

@@ -2,23 +2,23 @@
     "version": 2,
     "builds": [
         {
+            "src": "api/index.py",
+            "use": "@vercel/python"
+        },
+        {
             "src": "api/auth.py",
             "use": "@vercel/python"
         },
         {
             "src": "api/ping.py",
             "use": "@vercel/python"
-        },
-        {
-            "src": "api/index.py",
-            "use": "@vercel/python"
-        },
-        {
-            "src": "api/privacy-policy.js",
-            "use": "@vercel/node"
         }
     ],
     "routes": [
+        {
+            "src": "/api",
+            "dest": "api/index.py"
+        },
         {
             "src": "/api/signup",
             "dest": "api/auth.py"
@@ -30,14 +30,6 @@
         {
             "src": "/api/ping",
             "dest": "api/ping.py"
-        },
-        {
-            "src": "/api",
-            "dest": "api/index.py"
-        },
-        {
-            "src": "/privacy-policy",
-            "dest": "api/privacy-policy.js"
         }
     ]
 }
