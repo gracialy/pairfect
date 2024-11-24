@@ -6,7 +6,10 @@ from api.ping import router as ping_router
 app = FastAPI(
     title="Pairfect API",
     description="API for photo pairing with the help of Vision AI",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json"
 )
 
 app.include_router(auth_router)
