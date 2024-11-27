@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.auth import router as auth_router
 from api.ping import router as ping_router
+from api.pair import router as pair_router
 
 app = FastAPI(
     title="Pairfect API",
@@ -14,6 +15,7 @@ app = FastAPI(
 
 app.include_router(auth_router)
 app.include_router(ping_router)
+app.include_router(pair_router)
 
 # CORS middleware
 allow_all = ['*']
@@ -27,4 +29,7 @@ app.add_middleware(
 
 @app.get("/api")
 async def root():
+    """
+    Welcome message for the API
+    """
     return {"message": "Welcome to the pairfect API"}

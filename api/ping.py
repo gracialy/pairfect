@@ -31,7 +31,11 @@ async def validate(token: str = Depends(get_token)):
     """
     Validates the provided Firebase token.
     
+    Parameters:
     - **Authorization header**: Bearer <token>
+
+    Returns:
+    - Success message if the token is valid.
     """
     try:
         user = auth.verify_id_token(token)

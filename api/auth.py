@@ -14,7 +14,17 @@ class LoginRequest(BaseModel):
     password: str
 
 @router.post("/api/signup") 
-async def signup(request: SignupRequest):
+async def sign_up(request: SignupRequest):
+    """
+    Creates a new user in Firebase Auth using the provided email and password.
+    
+    Parameters:
+    - **email**: User email.
+    - **password**: User password.
+
+    Returns:
+    - Success message if the user is created successfully.
+    """
     try:
         # Validate input
         if not request.email or not request.password:
@@ -35,6 +45,16 @@ async def signup(request: SignupRequest):
 
 @router.post("/api/login")
 async def login(request: LoginRequest):
+    """
+    Authenticates the user with the provided email and password.
+    
+    Parameters:
+    - **email**: User email.
+    - **password**: User password.
+
+    Returns:
+    - JWT token.
+    """
     try:
         user = pb.auth().sign_in_with_email_and_password(request.email, request.password)
         jwt = user['idToken']

@@ -3,22 +3,23 @@ import json
 import firebase_admin
 import pyrebase
 from firebase_admin import credentials, auth
+from dotenv import load_dotenv
 
 try:
+    # Load environment variables locally
+    if not os.getenv('VERCEL'):
+        load_dotenv()
+
     firebase_credentials = os.environ.get('FIREBASE_CREDENTIALS')
-    firebase_config_str = os.environ.get('FIREBASE_CONFIG')
-    
-    if not firebase_credentials or not firebase_config_str:
+    firebase_config = os.environ.get('FIREBASE_CONFIG')
+
+    if not firebase_credentials or not firebase_config:
         raise ValueError("Firebase credentials or config not found in environment variables")
-    
-    with open('/tmp/firebase_key.json', 'w') as f:
-        f.write(firebase_credentials)
-    
-    cred = credentials.Certificate('/tmp/firebase_key.json')
+
+    cred = credentials.Certificate(json.loads(firebase_credentials))
     firebase = firebase_admin.initialize_app(cred)
     
-    firebase_config = json.loads(firebase_config_str)
-    pb = pyrebase.initialize_app(firebase_config)
+    pb = pyrebase.initialize_app(json.loads(firebase_config))
 except Exception as e:
     print(f"Firebase initialization error: {e}")
     raise
