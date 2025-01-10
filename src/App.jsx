@@ -102,10 +102,13 @@ const Login = ({ onNavigate, isSignup = false }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [error, setError] = useState('');
   const { login, signup } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+
     try {
       if (isSignup) {
         await signup(email, password, displayName);
@@ -114,6 +117,11 @@ const Login = ({ onNavigate, isSignup = false }) => {
       }
     } catch (error) {
       console.error('Auth error:', error);
+      const errorMessage = 
+      error.message === 'Failed to fetch' ? 'Unable to connect to the server. Please try again.' :
+      error.message.includes('401') ? 'Invalid email or password.' :
+      error.message || 'An unexpected error occurred.';
+      setError(errorMessage);
     }
   };
 
@@ -143,6 +151,9 @@ const Login = ({ onNavigate, isSignup = false }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {error && (
+            <div className="text-red-600">{error}</div>
+          )}
           <Button type="submit" className="w-full">
             {isSignup ? 'Sign Up' : 'Login'}
           </Button>
@@ -183,7 +194,13 @@ const PairImages = () => {
       setResult(result);
     } catch (error) {
       console.error('Pairing error:', error);
-      setError('Failed to pair images. Please try again.');
+      const errorMessage = 
+      error.message === 'Failed to fetch' ? 'Unable to connect to the server. Please try again.' :
+      error.message.includes('403') ? 'Access denied. Please log in again.' :
+      error.message.includes('400') ? 'Invalid data. Please check your input.' :
+      'An error occurred during image pairing. Please try again.';
+      setError(errorMessage);
+
     } finally {
       setLoading(false);
     }
@@ -208,12 +225,21 @@ const PairImages = () => {
       {result && (
         <div className="mt-4">
           <h3 className="text-lg font-bold">Results</h3>
+          {error && <div className="text-red-600 mt-2">{error}</div>}
           <div className="grid grid-cols-2 gap-4">
             <img src={result.original_image_uri} alt="Original" className="w-full" />
             <img src={result.result_image_uri} alt="Result" className="w-full" />
           </div>
-          <p>Match Percentage: {result.percentage_match}%</p>
-          <p>Analysis: Based on {result.original_labels.join(', ')}</p>
+          <div className="grid grid-cols-2 gap-4 mt-2">
+            <div>
+              <p><strong>Label Match:</strong> {(result.label_match * 100).toFixed(1)}%</p>
+              <p><strong>Color Match:</strong> {(result.color_match * 100).toFixed(1)}%</p>
+            </div>
+            <div>
+              <p><strong>Face Match:</strong> {(result.face_match * 100).toFixed(1)}%</p>
+              <p><strong>Overall Match:</strong> {(result.overall_match * 100).toFixed(1)}%</p>
+            </div>
+            </div>
         </div>
       )}
     </div>
@@ -364,7 +390,7 @@ const History = () => {
         setHistory(data);
       } catch (error) {
         console.error('History fetch error:', error);
-        setError('Failed to load history');
+        setError(error.message);
       } finally {
         setLoading(false);
       }
@@ -379,6 +405,9 @@ const History = () => {
       <CardContent>
         {loading && <div>Loading...</div>}
         {error && <div className="text-red-600">{error}</div>}
+        {!loading && !error && history.length === 0 && (
+          <div>No history available.</div>
+        )}
         <div className="space-y-6">
           {history.map((item) => (
             <div key={item.id} className="border p-4 rounded shadow">
@@ -418,16 +447,19 @@ const DeveloperPage = () => {
   const [clientId, setClientId] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const { token } = useAuth();
 
   const generateApiKey = async () => {
     if (!clientId || !token) return;
     setLoading(true);
+    setError(null);
     try {
       const result = await apiService.generateApiKey(clientId, token);
       setApiKey(result.api_key);
     } catch (error) {
       console.error('API key generation error:', error);
+      setError(error.message);
     }
     setLoading(false);
   };
@@ -445,6 +477,10 @@ const DeveloperPage = () => {
           <Button onClick={generateApiKey} disabled={loading}>
             {loading ? 'Generating...' : 'Generate API Key'}
           </Button>
+          
+          {error && (
+            <div className="text-red-600">{error}</div>
+          )}
           
           {apiKey && (
             <div className="mt-4 p-4 bg-gray-100 rounded">
@@ -474,7 +510,7 @@ const Navigation = ({ currentPage, onNavigate }) => {
               className="font-bold text-xl"
               onClick={() => onNavigate('process')}
             >
-              Image Processor
+              Pairfect
             </Button>
             <Button 
               variant="ghost"
@@ -512,6 +548,13 @@ const Navigation = ({ currentPage, onNavigate }) => {
 // App Content Component
 const AppContent = ({ currentPage, setCurrentPage }) => {
   const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      // Redirect to the image processing page after login
+      setCurrentPage('process'); 
+    }
+  }, [user, setCurrentPage]);
 
   const renderPage = () => {
     if (!user && !['login', 'signup'].includes(currentPage)) {
