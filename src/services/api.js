@@ -2,7 +2,7 @@ const API_BASE_URL = 'https://pairfect.codebloop.my.id/api/v1';
 
 export const apiService = {
   async signup(email, password, displayName) {
-    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+    const response = await fetch(`${API_BASE_URL}/users`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ export const apiService = {
   },
 
   async login(email, password) {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await fetch(`${API_BASE_URL}/session`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ export const apiService = {
     formData.append('keyword', keyword);
     formData.append('include_faces', 'false');
 
-    const response = await fetch(`${API_BASE_URL}/images/pair`, {
+    const response = await fetch(`${API_BASE_URL}/images/pairs`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -96,7 +96,7 @@ export const apiService = {
     formData.append('image', image);
     formData.append('sensitivity', sensitivity);
 
-    const response = await fetch(`${API_BASE_URL}/images/encrypt`, {
+    const response = await fetch(`${API_BASE_URL}/images/encryptions`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -116,7 +116,7 @@ export const apiService = {
   },
 
   async decryptImage(keyId, cipherText, iv, token) {
-    const response = await fetch(`${API_BASE_URL}/images/decrypt`, {
+    const response = await fetch(`${API_BASE_URL}/images/decryptions`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -141,7 +141,7 @@ export const apiService = {
   },
 
   async generateApiKey(clientId, token) {
-    const response = await fetch(`${API_BASE_URL}/developers/key-generation`, {
+    const response = await fetch(`${API_BASE_URL}/api-keys`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -158,6 +158,22 @@ export const apiService = {
         const error = await response.json(); 
         // Use the backend error message if available
         throw new Error(error.detail || 'API key generation failed');
+    }
+
+    return response.json();
+  },
+
+  async getPairingHistory(token) {
+    const response = await fetch(`${API_BASE_URL}/images/pairs`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch history');
     }
 
     return response.json();

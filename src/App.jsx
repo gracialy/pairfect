@@ -351,25 +351,60 @@ const ImageProcessor = () => {
 // History Component
 const History = () => {
   const [history, setHistory] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { token } = useAuth();
 
   useEffect(() => {
-    // Fetch history from Firebase
-  }, []);
+    const fetchHistory = async () => {
+      if (!token) return;
+      
+      try {
+        const data = await apiService.getPairingHistory(token);
+        setHistory(data);
+      } catch (error) {
+        console.error('History fetch error:', error);
+        setError('Failed to load history');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHistory();
+  }, [token]);
 
   return (
     <Card className="w-full max-w-4xl mx-auto mt-8">
       <CardHeader className="text-2xl font-bold">History</CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {history.map((item, index) => (
-            <div key={index} className="border p-4 rounded">
+        {loading && <div>Loading...</div>}
+        {error && <div className="text-red-600">{error}</div>}
+        <div className="space-y-6">
+          {history.map((item) => (
+            <div key={item.id} className="border p-4 rounded shadow">
               <div className="grid grid-cols-2 gap-4">
-                <img src={item.inputImage} alt="Input" className="w-full" />
-                <img src={item.resultImage} alt="Result" className="w-full" />
+                <div>
+                  <p className="mb-2 font-medium">Original Image</p>
+                  <img src={item.original_image_uri} alt="Original" className="w-full rounded" />
+                </div>
+                <div>
+                  <p className="mb-2 font-medium">Result Image</p>
+                  <img src={item.result_image_uri} alt="Result" className="w-full rounded" />
+                </div>
               </div>
-              <p>Keyword: {item.keyword}</p>
-              <p>Compatibility Score: {item.score}</p>
-              <p>Analysis: {item.analysis}</p>
+              <div className="mt-4 space-y-2">
+                <p><strong>Keyword:</strong> {item.original_keyword}</p>
+                <div className="grid grid-cols-2 gap-4 mt-2">
+                  <div>
+                    <p><strong>Label Match:</strong> {(item.label_match * 100).toFixed(1)}%</p>
+                    <p><strong>Color Match:</strong> {(item.color_match * 100).toFixed(1)}%</p>
+                  </div>
+                  <div>
+                    <p><strong>Face Match:</strong> {(item.face_match * 100).toFixed(1)}%</p>
+                    <p><strong>Overall Match:</strong> {(item.overall_match * 100).toFixed(1)}%</p>
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
